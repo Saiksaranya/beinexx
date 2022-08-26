@@ -1,0 +1,94 @@
+<!-- 
+<svg width="300px" height="300px"></svg> -->
+<script src="https://d3js.org/d3.v7.min.js"></script>
+<!-- <script>
+    var number =[20,30,50,30,10,90]
+    var barHeight =40;
+
+    d3.select("svg")
+    .selectAll("rect")
+    .data(heros)
+    .enter(numbers)
+    .append("rect")
+    .attr("width", d =>d)
+    .attr('height',barHeight)
+    .attr('transform',(d,i)=>"translate(100,"+ i * barHeight +")")
+    </script> -->
+
+ <script>
+    let data = {
+    "FACEBOOK": 30,
+    "GITHUB"  : 44,
+    "GOOGLE"  : 64,
+    "TWITTER" : 17,
+    "WEIBO"   : 19
+};
+let margin = {top: 20, right: 20, bottom: 30, left: 80};
+let svgWidth = 720, svgHeight = 300;
+let height = svgHeight- margin.top- margin.bottom, width = svgWidth - margin.left - margin.right;
+let sourceNames = [], sourceCount = [];
+
+let x = d3.scaleLinear().rangeRound([0, width]),
+    y = d3.scaleBand().rangeRound([0, height]).padding(0.1);
+for(let key in data){
+    if(data.hasOwnProperty(key)){
+        sourceNames.push(key);
+        sourceCount.push(parseInt(data[key]));
+    }
+}
+x.domain([0, d3.max(sourceCount, function(d) { return d; })]);
+y.domain(sourceNames);
+
+let svg = d3.select("#account_group").append("svg");
+svg.attr('height', svgHeight)
+   .attr('width', svgWidth);
+
+svg = svg.append("g")
+         .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+svg.append("g")
+    .attr("transform", "translate(0, " + height + ")")
+    .call(d3.axisBottom(x))
+    ;
+
+svg.append("g")
+    .call(d3.axisLeft(y))
+    ;
+        
+// Create rectangles
+let bars = svg.selectAll('.bar')
+    .data(sourceNames)
+    .enter()
+    .append("g");
+
+bars.append('rect')
+    .attr('class', 'bar')
+    .attr("x", function(d) { return 0; })
+    .attr("y", function(d) { return y(d); })
+    .attr("width", function(d){return x(data[d])})
+    .attr("height", function(d) { return y.bandwidth(); });
+    
+bars.append("text")
+    .text(function(d) { 
+        return data[d];
+    })
+    .attr("x", function(d){
+        return x(data[d]) + 15;
+    })
+    .attr("y", function(d){
+        console.log(d);
+        return y(d) + y.bandwidth() * (0.5 + 0.1); // here 0.1 is the padding scale
+    })
+    .attr("font-family" , "sans-serif")
+    .attr("font-size" , "14px")
+    .attr("fill" , "black")
+    .attr("text-anchor", "middle");
+
+</script> 
+
+
+
+
+
+
+
